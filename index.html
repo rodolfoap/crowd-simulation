@@ -1,240 +1,52 @@
-<!DOCTYPE html>
-<html>
-
+<!DOCTYPE html><html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html" charset="utf-8" />
-    <title>crowd-simulation</title>
-    <!-- Link to the last version of BabylonJS -->
-    <script src="https://preview.babylonjs.com/babylon.js"></script>
-    <!-- Link to the last version of BabylonJS loaders to enable loading filetypes such as .gltf -->
-    <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
-    <!-- Link to pep.js to ensure pointer events work consistently in all browsers -->
-    <script src="https://code.jquery.com/pep/0.4.1/pep.js"></script>
-
-    <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
-
-    <link rel="stylesheet" href="./css/styles.css">
-    <link rel="stylesheet" href="./css/slider.css">
+	<meta http-equiv="Content-Type" content="text/html" charset="utf-8" />
+	<script src="https://preview.babylonjs.com/babylon.js"></script>
+	<script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+	<script src="https://code.jquery.com/pep/0.4.1/pep.js"></script>
+	<style> html, #renderCanvas { width: 100%; height: 100%; } </style>
 </head>
+<body><canvas id="renderCanvas"></canvas></body>
 
-<body>
-    <canvas id="renderCanvas">
-    </canvas>
-    <div class="side-panel">
-        <div style="display: flex; justify-content:space-around; align-items: center">
-            <span id="algo_name">Text</span>
-            <label class="switch">
-                <input id="slider_algo" onclick="toggleCheckbox(this)" type="checkbox">
-                <span class="slider"></span>
-            </label>
-        </div>
-
-        <form name="params" action="" method="GET">
-            <div>
-                <div class="setting-name">
-                    <div>Agents:&nbsp;</div>
-                    <div id='agents-amount-div'></div>
-                </div>
-                <input disabled style="display:none" id='agents-amount-input' onchange="onAgentsChange()" type="range"
-                    name="agentsAmount" min="1" max="500" value="500">
-                <div class="setting-name">
-                    <div>Neighbour Radius:&nbsp;</div>
-                    <div id='neighbour-radius-div'></div>
-                </div>
-                <input disabled style="display:none" id='neighbour-radius-input' onchange="onNeighbourRadiusChange()"
-                    type="range" name="neighbourRadius" min="1" max="100" value="8">
-                <div class="setting-name">
-                    <div>Observable Degree:&nbsp;</div>
-                    <div id='observe-degree-div'></div>
-                </div>
-                <input id='observe-degree-input' onchange="onObserveDegreeChange()" type="range" name="observeDegree"
-                    min="30" max="270" value="120">
-                <div class="setting-name">
-                    <div>Minimal Distance:&nbsp;</div>
-                    <div id='min-distance-div'></div>
-                </div>
-                <input id='min-distance-input' onchange="onMinDistanceChange()" type="range" name="minDistance" min="1"
-                    max="50" value="8">
-                <div class="setting-name">
-                    <div>Weight Neighbour Velocity:&nbsp;</div>
-                    <div id='weight-neighbour-velocity-div'></div>
-                </div>
-                <input id='weight-neighbour-velocity-input' onchange="onWeightNeighbourVelocityChange()" type="range"
-                    name="weightNeighbourVelocity" min="0.05" max="1" value="0.1" step="0.05">
-                <div class="setting-name">
-                    <div>Weight Neighbour Distance:&nbsp;</div>
-                    <div id='weight-neighbour-distance-div'></div>
-                </div>
-                <input id='weight-neighbour-distance-input' onchange="onWeightNeighbourDistanceChange()" type="range"
-                    name="weightNeighbourDistance" min="0.05" max="1" value="0.15" step="0.05">
-                <div class="setting-name">
-                    <div>Weight Minimal Distance:&nbsp;</div>
-                    <div id='weight-minimal-distance-div'></div>
-                </div>
-                <input id='weight-minimal-distance-input' onchange="onWeightMinimalDistanceChange()" type="range" name="weightMinimalDistance"
-                    min="0.05" max="1" value="0.15" step="0.05">
-                <div class="setting-name">
-                    <div>Weight Perturbation:&nbsp;</div>
-                    <div id='weight-perturbation-div'></div>
-                </div>
-                <input id='weight-perturbation-input' onchange="onWeightPerturbationChange()" type="range" name="weightPerturbation"
-                    min="0.05" max="1" value="0.1" step="0.05">
-                <div class="setting-name">
-                    <div>Max Velocity:&nbsp;</div>
-                    <div id='max-velocity-div'></div>
-                </div>
-                <input id='max-velocity-input' onchange="onMaxVelocityChange()" type="range" name="maxVelocity" min="0.5"
-                    max="10" value="1" step="0.5">
-                <div class="setting-name">
-                    <div>Speed to targets:&nbsp;</div>
-                    <div id='speed-to-target-div'></div>
-                </div>
-                <input id='speed-to-target-input' onchange="onSpeedToTarget()" type="range" name="speedToTarget" min="1"
-                    max="5" value="1" step="0.5">
-                <div class="setting-name">
-                    <div>Time to achive targets:&nbsp;</div>
-                    <div id='time-to-target-div'></div>
-                </div>
-                <input id='time-to-target-input' onchange="onTimeToTarget()" type="range" name="timeToTarget" min="1000"
-                    max="5000" value="2000" step="1000">
-                <div class="setting-name">
-                    <div>Chances to achive target divider: <div id='chance-to-target-div'></div>
-                    </div>
-                </div>
-                <input id='chance-to-target-input' onchange="onChanceToTarget()" type="range" name="chanceToGetToTarget"
-                    min="0" max="10" value="2" step="1">
-            </div>
-
-            <input class="buttons update-button" type="button" value="Update" onClick="update_scene();">
-            <input class="buttons repaint-button" type="button" value="Repaint" onClick="repaint_scene();">
-        </form>
-    </div>
-</body>
-<script src="./js/constants.js"></script>
-<script src="./js/sceneUpdate/repaintScene.js"></script>
 <script>
-    const agentsAmountDiv = document.getElementById('agents-amount-div');
-    const neighbourRadiusDiv = document.getElementById('neighbour-radius-div');
-    const observeDegreeDiv = document.getElementById('observe-degree-div');
-    const minDistanceDiv = document.getElementById('min-distance-div');
-    const weightNeighbourVelocityDiv = document.getElementById('weight-neighbour-velocity-div');
-    const weightNeighbourDistanceDiv = document.getElementById('weight-neighbour-distance-div');
-    const weightMinimalDistanceDiv = document.getElementById('weight-minimal-distance-div');
-    const weightPerturbationDiv = document.getElementById('weight-perturbation-div');
-    const maxVelocityDiv = document.getElementById('max-velocity-div');
-    const speedToTargetDiv = document.getElementById('speed-to-target-div');
-    const timeToTargetDiv = document.getElementById('time-to-target-div');
-    const chanceToGetToTargetDiv = document.getElementById('chance-to-target-div');
-
-    function onAgentsChange() {
-        agentsAmountDiv.innerHTML = document.params.agentsAmount.value;
-    };
-
-    function onNeighbourRadiusChange() {
-        neighbourRadiusDiv.innerHTML = document.params.neighbourRadius.value;
-    };
-
-    function onObserveDegreeChange() {
-        observeDegreeDiv.innerHTML = document.params.observeDegree.value;
-    };
-
-    function onMinDistanceChange() {
-        minDistanceDiv.innerHTML = document.params.minDistance.value;
-    };
-
-    function onWeightNeighbourVelocityChange() {
-        weightNeighbourVelocityDiv.innerHTML = document.params.weightNeighbourVelocity.value;
-    };
-
-    function onWeightNeighbourDistanceChange() {
-        weightNeighbourDistanceDiv.innerHTML = document.params.weightNeighbourDistance.value;
-    };
-
-    function onWeightMinimalDistanceChange() {
-        weightMinimalDistanceDiv.innerHTML = document.params.weightMinimalDistance.value;
-    };
-
-    function onWeightPerturbationChange() {
-        weightPerturbationDiv.innerHTML = document.params.weightPerturbation.value;
-    };
-
-    function onMaxVelocityChange() {
-        maxVelocityDiv.innerHTML = document.params.maxVelocity.value;
-    };
-
-    function onSpeedToTarget() {
-        speedToTargetDiv.innerHTML = document.params.speedToTarget.value;
-    };
-
-    function onTimeToTarget() {
-        timeToTargetDiv.innerHTML = document.params.timeToTarget.value;
-    };
-
-    function onChanceToTarget() {
-        chanceToGetToTargetDiv.innerHTML = document.params.chanceToGetToTarget.value;
-    };
-    /*
-        init function call 
-        to show start data in html 
-    */
-    onAgentsChange(agentsAmountDiv);
-    onNeighbourRadiusChange(neighbourRadiusDiv);
-    onObserveDegreeChange(observeDegreeDiv);
-    onMinDistanceChange(minDistanceDiv);
-    onWeightNeighbourVelocityChange(weightNeighbourVelocityDiv);
-    onWeightNeighbourDistanceChange(weightNeighbourDistanceDiv);
-    onWeightMinimalDistanceChange(weightMinimalDistanceDiv);
-    onWeightPerturbationChange(weightPerturbationDiv);
-    onMaxVelocityChange(maxVelocityDiv);
-    onSpeedToTarget(speedToTargetDiv);
-    onTimeToTarget(timeToTargetDiv);
-    onChanceToTarget(chanceToGetToTargetDiv);
+	const createCamera = (scene, canvas, cameraAngle, cameraZoom, cameraXasis, cameraYasis) => {
+		const camera = new BABYLON.ArcRotateCamera("Camera", cameraAngle, 1, cameraZoom, new BABYLON.Vector3(cameraXasis, 10, cameraYasis), scene);
+		camera.attachControl(canvas, true);
+	}
+	const createAgentMeshes = (scene) => {
+		const cubes = new Array(AMOUNT_CUBES)
+		for (let i = 0; i < cubes.length; i++) {
+			cubes[i]=BABYLON.MeshBuilder.CreateBox("", { height: 3, width: 3, depth: 3 }, scene);
+			cubes[i].position.y = 5;
+		}
+		return cubes;
+	}
+	// cube amount
+	const AMOUNT_CUBES = 500;
+	// ground params
+	const GROUND_WIDTH = 600;
+	const GROUND_HEIGHT = 400;
+	const INIT_POS_X = 300;
+	const INIT_POS_Z = 200;
+	// camera params
+	const CAMERA_ANGLE = 0;
+	const CAMERA_ZOOM = 500;
+	const CAMERA_POS_X = 300;
+	const CAMERA_POS_Y = 200;
+	window.addEventListener('DOMContentLoaded', function () {
+		const canvas = document.getElementById('renderCanvas');
+		const engine = new BABYLON.Engine(canvas, true);
+		var createScene = function () {
+			const scene = new BABYLON.Scene(engine);
+			createCamera(scene, canvas, CAMERA_ANGLE, CAMERA_ZOOM, CAMERA_POS_X, CAMERA_POS_Y);
+			cubes = createAgentMeshes(scene);
+			return scene;
+		};
+		var scene = createScene();
+		start();
+		engine.runRenderLoop(function () { scene.render(); });
+		window.addEventListener('resize', function () { engine.resize(); });
+	});
 </script>
-<script>
-    document.getElementById('algo_name').innerHTML = algorythmTypes[algorythmID]
-    const toggleCheckbox = (element) => {
-        algorythmID = +element.checked;
-        document.getElementById('algo_name').innerHTML = algorythmTypes[algorythmID];
-        repaint_scene();
-    }
-</script>
-<script>
-    /*  ##############################
-        ## BABYLON SCENE RENDERING  ##
-        ##############################
-    */
-    let scene;
-    const canvas = document.getElementById('renderCanvas');
-    const engine = new BABYLON.Engine(canvas, true);
-    window.addEventListener('DOMContentLoaded', function () {
-        var createScene = function () {
-            const scene = new BABYLON.Scene(engine);
-            createCamera(scene, canvas);
-            createLights(scene);
-            createGround(scene);
-            createTouristPlaces(scene);
-            createTargets(scene);
-
-            agents = createAgentMeshes(scene);
-
-            return scene;
-        };
-        scene = createScene();
-        start();
-        engine.runRenderLoop(function () {
-            scene.render();
-        });
-        window.addEventListener('resize', function () {
-            engine.resize();
-        });
-    });
-</script>
-<script src="./js/boids.js"></script>
-<script src="./js/setup/sceneSetup.js"></script>
-<script src="./js/setup/cameraSetup.js"></script>
-<script src="./js/setup/lightSetup.js"></script>
-<script src="./js/setup/groundSetup.js"></script>
-<script src="./js/sceneUpdate/updateParams.js"></script>
-<script src="./js/sceneUpdate/updateScene.js"></script>
-
+<script src="./boids.js"></script>
 </html>
